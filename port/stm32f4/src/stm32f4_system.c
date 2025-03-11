@@ -180,12 +180,12 @@ void port_system_delay_until_ms(uint32_t *p_t, uint32_t ms)
 
 uint32_t port_system_get_millis()
 {
-  return 0;
+  return msTicks;
 }
 
 void port_system_set_millis(uint32_t ms)
 {
-
+  msTicks = ms;
 }
 
 // ------------------------------------------------------
@@ -274,6 +274,15 @@ void stm32f4_system_gpio_config_exti(GPIO_TypeDef *p_port, uint8_t pin, uint32_t
   {
     EXTI->IMR |= BIT_POS_TO_MASK(pin);
   }
+
+  //PREGUNTAR
+  /*  Read the value of the PR register of the EXTI peripheral associated with the button pin*/
+  EXTI -> PR &= BIT_POS_TO_MASK(pin);
+  if(mode & STM32F4_TRIGGER_ENABLE_INTERR_REQ)
+  {
+    EXTI -> PR |= BIT_POS_TO_MASK(pin);
+  }
+
 }
 
 void stm32f4_system_gpio_exti_enable(uint8_t pin, uint8_t priority, uint8_t subpriority)
@@ -289,13 +298,45 @@ void stm32f4_system_gpio_exti_disable(uint8_t pin)
 
 void stm32f4_system_gpio_config_alternate(GPIO_TypeDef *p_port, uint8_t pin, uint8_t alternate)
 {
-  uint32_t base_mask = 0x0FU;
+  uint32_t base_mask = 0x0FU; 
   uint32_t displacement = (pin % 8) * 4;
 
   p_port->AFR[(uint8_t)(pin / 8)] &= ~(base_mask << displacement);
   p_port->AFR[(uint8_t)(pin / 8)] |= (alternate << displacement);
 }
 
+
+bool stm32f4_system_gpio_read(GPIO_TypeDef *p_port, uint8_t pin)
+{
+  return (p_port->IDR & BIT_POS_TO_MASK(pin)) != 0;
+}
+
+
+void stm32f4_system_gpio_write(GPIO_TypeDef *p_port, uint8_t pin, bool value)
+{
+  if (value)
+  {
+    p_port->BSRR = BIT_POS_TO_MASK(pin);
+  }
+  else
+  {
+    p_port->BSRR = BIT_POS_TO_MASK(pin + 16);
+  }
+}
+
+
+
+void stm32f4_system_gpio_toggle(GPIO_TypeDef *p_port, uint8_t pin)
+{
+  if (stm32f4_system_gpio_read(p_port, pin))
+  {
+    stm32f4_system_gpio_write(p_port, pin, false);
+  }
+  else
+  {
+    stm32f4_system_gpio_write(p_port, pin, true);
+  }
+}
 // ------------------------------------------------------
 // POWER RELATED FUNCTIONS
 // ------------------------------------------------------

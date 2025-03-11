@@ -165,4 +165,33 @@ void stm32f4_system_gpio_exti_enable(uint8_t pin, uint8_t priority, uint8_t subp
  */
 void stm32f4_system_gpio_exti_disable(uint8_t pin);
 
+/**
+ * @brief Retrieve the value of th IDR register.
+ * 
+ * @param p_port 
+ * @param pin 
+ * @return true 
+ * @return false 
+ */
+bool stm32f4_system_gpio_read(GPIO_TypeDef *p_port, uint8_t pin);
+
+
+/**
+ * @brief Set the corresponding bit value of the BSRR register.
+ * 
+ * @param p_port 
+ * @param pin 
+ * @param value 
+ */
+void stm32f4_system_gpio_write(GPIO_TypeDef *p_port, uint8_t pin, bool value);
+
+/**
+ * @brief Read the value of GPIO and write the opposite value.
+ * 
+ * @param p_port 
+ * @param pin 
+ */
+void stm32f4_system_gpio_toggle(GPIO_TypeDef *p_port, uint8_t pin);
+
+
 #endif /* STM32F4_SYSTEM_H_ */

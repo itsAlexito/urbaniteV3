@@ -7,7 +7,8 @@
 // Include HW dependencies:
 #include "port_system.h"
 #include "stm32f4_system.h"
-
+#include "port_button.h"
+#include "stm32f4_button.h"
 // Include headers of different port elements:
 
 //------------------------------------------------------
@@ -28,4 +29,35 @@
  */
 void SysTick_Handler(void)
 {
+    uint32_t local = port_system_get_millis();
+    port_system_set_millis(local + 1);
+}
+
+void EXTI15_10_IRQHandler(void)
+{
+    // Verifica si hay una interrupción pendiente
+    if (port_button_get_pending_interrupt(PORT_PARKING_BUTTON_ID))
+    {
+        // Retrieve the value of the GPIO of the user button
+        bool button_value = port_button_get_value(PORT_PARKING_BUTTON_ID);
+
+        // Check if the button has been pressed or released
+        if (button_value)
+        {
+            // Button released
+            port_button_set_pressed(PORT_PARKING_BUTTON_ID, false);
+        }
+        else
+        {
+            // Button pressed
+            port_button_set_pressed(PORT_PARKING_BUTTON_ID, true);
+        }
+
+        // Clean the corresponding bit of the PR register
+        port_button_clear_pending_interrupt(PORT_PARKING_BUTTON_ID);
+    }
+
+
+    // Clean the corresponding bit of the PR register
+    EXTI->PR = BIT_POS_TO_MASK(PORT_PARKING_BUTTON_ID);
 }
