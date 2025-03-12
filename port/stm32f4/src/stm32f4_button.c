@@ -29,7 +29,7 @@ typedef struct
     uint8_t pin;
     uint8_t pupd_mode;
     bool flag_pressed;
-} stm32f4_button_hw_t;
+} stm32f4_button_hw_t; //name of the struct 
 
 /* Global variables ------------------------------------------------------------*/
 

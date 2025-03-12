@@ -114,8 +114,8 @@ static void fsm_button_init(fsm_button_t *p_fsm_button, uint32_t debounce_time, 
     p_fsm_button->debounce_time_ms = debounce_time;
     p_fsm_button->button_id = button_id;
     p_fsm_button->tick_pressed = 0;
-    fsm_button_reset_duration(p_fsm_button);
-    port_button_init(button_id);
+    fsm_button_reset_duration(p_fsm_button); //Initialize the duration to 0
+    port_button_init(button_id); //Initialize the button
     
 
 }
