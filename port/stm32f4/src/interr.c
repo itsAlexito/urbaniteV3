@@ -9,6 +9,9 @@
 #include "stm32f4_system.h"
 #include "port_button.h"
 #include "stm32f4_button.h"
+//includes V2
+#include "port_ultrasound.h"
+#include "stm32f4_ultrasound.h"
 // Include headers of different port elements:
 
 //------------------------------------------------------
@@ -60,4 +63,13 @@ void EXTI15_10_IRQHandler(void)
 
     // Clean the corresponding bit of the PR register
     EXTI->PR = BIT_POS_TO_MASK(PORT_PARKING_BUTTON_ID);
+}
+
+
+void TIM3_IRQHandler(void){
+    // Clear the interrupt flag UIF in the status register SR
+    TIM3->SR &= ~TIM_SR_UIF; /*!<Update interrupt Flag              */
+
+    // Call the function to set the flag that indicates the time of the trigger signal has expired
+    port_ultrasound_set_trigger_end(PORT_REAR_PARKING_SENSOR_ID, true);
 }
