@@ -76,9 +76,6 @@ void port_button_init(uint32_t button_id)
 
     // Enable the interrupt
     stm32f4_system_gpio_exti_enable(p_button->pin, 1, 0); //pin, priority, subpriority
-    
-
-
 }
 
 void stm32f4_button_set_new_gpio(uint32_t button_id, GPIO_TypeDef *p_port, uint8_t pin)

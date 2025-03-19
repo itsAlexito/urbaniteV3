@@ -19,7 +19,7 @@
 /* Defines */
  #define STM32F4_PARKING_BUTTON_GPIO GPIOC /*!< GPIO port of the user button */
  #define STM32F4_PARKING_BUTTON_PIN 13 /*!< GPIO pin of the user button */
- #define MODER13_AS_INPUT (STM32F4_GPIO_MODE_IN << STM32F4_PARKING_BUTTON_PIN * 2)       /*<! Input mode for BUTTON_PIN in MODER register */
+ #define MODER13_AS_INPUT (STM32F4_GPIO_MODE_IN << STM32F4_PARKING_BUTTON_PIN * 2) /*<! Input mode for BUTTON_PIN in MODER register */
 
 
 /* Function prototypes and explanation -------------------------------------------------*/

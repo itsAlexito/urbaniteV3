@@ -26,13 +26,14 @@
 #define STM32F4_REAR_PARKING_SENSOR_TRIGGER_GPIO GPIOB
 #define STM32F4_REAR_PARKING_SENSOR_TRIGGER_PIN 0
 #define STM32F4_REAR_PARKING_SENSOR_ECHO_GPIO GPIOA
-#define STM32F4_REAR_PARKING_SENSOR_ECHO_PIN 1 
+#define STM32F4_REAR_PARKING_SENSOR_ECHO_PIN 1
 
 
 //-------------
-#define MODER13_AS_OUTPUT (STM32F4_GPIO_MODE_OUT << STM32F4_REAR_PARKING_SENSOR_TRIGGER_PIN  * 2)       /*<! Output mode for BUTTON_PIN in MODER register */
-#define MODER13_AS_ALTERNATE (STM32F4_GPIO_MODE_AF << STM32F4_REAR_PARKING_SENSOR_ECHO_PIN  * 2)       /*<! Alternate mode for BUTTON_PIN in MODER register */
-
+/*
+#define MODER0_AS_OUTPUT (STM32F4_GPIO_MODE_OUT << STM32F4_REAR_PARKING_SENSOR_TRIGGER_PIN  * 2)// <! Output mode for BUTTON_PIN in MODER register 
+#define MODER1_AS_ALTERNATE (STM32F4_GPIO_MODE_AF << STM32F4_REAR_PARKING_SENSOR_ECHO_PIN  * 2) //<! Alternate mode for BUTTON_PIN in MODER register 
+*/
 /* Function prototypes and explanation -------------------------------------------------*/
 /**
  * @brief Auxiliary function to change the GPIO and pin of the trigger pin of an ultrasound transceiver. This function is used for testing purposes mainly although it can be used in the final implementation if needed.
