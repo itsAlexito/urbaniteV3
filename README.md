@@ -1,93 +1,116 @@
-# Título del proyecto
+# Urbanite: Sistema de Ayuda al Aparcamiento Basado en Ultrasonidos
 
 ## Authors
 
-* **Álvaro San Emeterio** - email: [a.sanemeterio@alumnos.upm.es](mailto:alumno@alumno.es)
-* **Alejandro Barrio Domínguez** - email: [alejandro.barrio.dominguez@alumno.es](mailto:alumno@alumno.es)
+* **Álvaro San Emeterio Valdés** - email: [a.sanemeterio@alumnos.upm.es](mailto:a.sanemeterio@alumnos.upm.es)
+* **Alejandro Barrio Domínguez** - email: [alejandro.barrio.dominguez@alumno.es](mailto:alejandro.barrio.dominguez@alumno.es)
 
-Ponga una breve descripción del proyecto **aquí** en castellano e inglés.
+## Descripción del proyecto
 
-Puede añadir una imagen de portada **de su propiedad** aquí. Por ejemplo, del montaje final, o una captura de osciloscopio, etc.
+**Urbanite** es un sistema empotrado desarrollado sobre la plataforma Nucleo-STM32F446RE que permite detectar la distancia a obstáculos utilizando un sensor de ultrasonidos HC-SR04. Esta información se muestra al usuario mediante un LED RGB, y se controla el funcionamiento mediante un botón físico. El sistema está implementado en lenguaje C y sigue una arquitectura modular basada en máquinas de estados finitos (FSM) y principios de programación portable y reutilizable.
 
-**Las imágenes se deben guardar en la carpeta `docs/assets/imgs/` y se pueden incluir en el documento de la siguiente manera:**
+## Diagrama del proyecto
 
-```markdown
-![Texto alternativo](docs/assets/imgs/imagen.png)
-```
+![Diagrama de elementos del sistema](docs/assets/imgs/urbanite_diagram.png)
 
-NOTA: **NO** añada el código ```markdown``` en el fichero `README.md` de su proyecto, sino lo de dentro. Este código es un para mostrar de forma literal cómo se puede añadir una imagen al fichero `README.md`.
+> El sistema central con la placa Nucleo-STM32 aloja el microcontrolador
+STM32F446RE. Se encarga de gestionar, el encendido y apagado del sistema Urbanite, y de
+interpretar la distancia para actuar en consecuencia.
 
-**Añada un enlace a un vídeo público de su propiedad aquí con la demostración del proyecto explicando lo que haya hecho en la versión V5.**
+> La placa Nucleo-STM32 también tiene el botón de usuario B1, y el LED de usuario LD2. Estos
+conforman el sub-sistema de control básico. El botón se usará para detectar pulsaciones
+que el sistema central interpretará para cambiar encender/ apagar, o para pausar el display.
+El LED podrá usarse para saber si hemos realizado correctamente una operación, a modo de
+feedback.
 
-Para añadir un enlace a un vídeo de Youtube, puede usar el siguiente código:
+>El sub-sistema de medida de distancia. Representa a un dispositivo HW que incorpora un
+transceptor de ultrasonidos HC-SR04. Este dispositivo contiene un altavoz que emite un pulso
+ultrasónico y un micrófono que recoge el eco. La distancia a la que se encuentra un obstáculo
+se puede calcular a partir del tiempo que tarda en llegar el eco.
 
-```markdown
-[![Texto alternativo](docs/assets/imgs/imagen.png)](https://youtu.be/ID_DEL_VIDEO "Texto al pasar el ratón por encima de la imagen.")
-```
+>El módulo de actuación. El display está compuesto por un LED RGB que se encenderá en
+función de la distancia.
 
-NOTA: **NO** añada el código ```markdown``` sino lo de dentro. Este código es un para mostrar de forma literal cómo se puede añadir un enlace a un vídeo de Youtube al fichero `README.md`.
 
-## Version 1
+---
 
-Breve descripción de la versión 1.
+## Version 1 - Botón de usuario
 
-* Para poner un texto en negrita se usa el símbolo `**` de manera consecutiva. Por ejemplo: **Texto en negrita**
-* Para poner un texto en cursiva se usa el símbolo `*` de manera consecutiva. Por ejemplo: *Texto en cursiva*
-* Para poner un texto en cursiva y negrita se usa el símbolo `***` de manera consecutiva. Por ejemplo: ***Texto en cursiva y negrita***
+### Descripción general
 
-Para añadir subsecciones se usa el símbolo `#` de manera consecutiva. Por ejemplo:
+Esta versión implementa el control básico del sistema mediante un botón de usuario (PC13). Se usa para encender, apagar y pausar el sistema Urbanite. Se emplea una máquina de estados finita (FSM) para gestionar los estados del botón y se aplica lógica anti-rebote por software.
 
-### Subsección 1
+### Funcionalidad implementada
 
-Breve descripción de la subsección 1.
+- Lectura del botón mediante interrupciones (EXTI13).
+- FSM para detección de pulsación y duración.
+- Gestión del estado del sistema según duración de la pulsación.
+- Temporización con SysTick.
+- Tests unitarios para parte `PORT` y `COMMON`.
+- Documentación con Doxygen.
 
-Para añadir una lista de elementos se usa el símbolo `-` de manera consecutiva. Por ejemplo:
+### Estructura modular
 
-* Elemento 1
-* Elemento 2
-* Elemento 3
+- **PORT**: acceso al hardware del botón.
+- **COMMON**: lógica genérica y FSM del botón.
 
-Para añadir una lista de elementos numerados se usa el símbolo `1.` de manera consecutiva. Por ejemplo:
+### Diagrama estados FSM BUTTON
 
-1. Elemento 1
-2. Elemento 2
-3. Elemento 3
+![FSM del botón de usuario](docs/assets/imgs/fsm_button.png)
 
-Para añadir un enlace a una página web se usa el siguiente código:
 
-```markdown
-Enlace a [Google](https://www.google.com).
-```
+---
 
-NOTA: **NO** añada el código ```markdown``` sino lo de dentro. Este código es un para mostrar de forma literal cómo se puede añadir un enlace a una página web al fichero `README.md`.
+## Version 2 - Transceptor de ultrasonidos (hasta COMMON)
 
-Puede añadir tablas de la siguiente manera:
+### Descripción general
 
-| Columna 1 | Columna 2 | Columna 3 |
-| --------- | --------- | --------- |
-| Valor 1   | Valor 2   | Valor 3   |
-| Valor 4   | Valor 5   | Valor 6   |
+En esta versión se implementa la librería para el sensor de ultrasonidos HC-SR04. Se emplean tres temporizadores (TIM2, TIM3, TIM5) para gestionar (respectivamente):
+- El pulso de trigger.
+- La medida de la señal de eco (input capture).
+- El timeout entre mediciones.
 
-Para añadir un enlace a un fichero `.c` o `.h` puede usar el siguiente código. Se trata de enlaces a ficheros `.html` que se generan automáticamente con la documentación del código al ejecutar Doxygen y que se encuentran en la carpeta `docs/html/`.
+### Funcionalidad implementada
 
-```markdown
-Enlace a la [FSM de Version 1](fsm__button_8c.html).
-```
+- Configuración del trigger por temporizador.
+- Medición de eco con input capture.
+- Temporizador de timeout entre medidas.
+- FSM para gestionar el ciclo de medida. (TO-DO)
+- Tests unitarios de los tres temporizadores. (TO-DO)
 
-NOTA: **NO** añada el código ```markdown``` sino lo de dentro. Este código es un para mostrar de forma literal cómo se puede añadir un enlace a un fichero `.c` o `.h` al fichero `README.md`.
 
-## Version 2
+### Estructura modular
 
-Breve descripción de la versión 2.
+- **PORT**:
+  - Control del pin de trigger.
+  - Lectura del pin de echo (input capture).
+  - Configuración de temporizadores.
+- **COMMON**:
+  - FSM que controla el ciclo de medida.
+  - Cálculo de distancia con fórmula estándar.
 
-## Version 3
+### DIAGRAMA TRIGGER/ECHO
 
-Breve descripción de la versión 3.
+![Diagrama de temporización HC-SR04](docs/assets/imgs/ultrasound_timing.png)
 
-## Version 4
 
-Breve descripción de la versión 4.
+---
 
-## Version 5
+## Próximos pasos
 
-Breve descripción de la versión 5.
+- Completar la FSM de la versión 2 con pruebas de integración.
+
+---
+
+## Recursos adicionales
+
+- [Documentación generada con Doxygen](docs/html/index.html)
+- [Repositorio oficial Urbanite - UPM](https://github.com/sdg2DieUpm/urbanite)
+- [Tutoriales y vídeos SDG2](https://www.youtube.com/channel/UCYIw_gl745WMJ1n0MamDzQw)
+
+---
+
+## Licencia
+
+Este proyecto está basado en material docente de la Universidad Politécnica de Madrid (UPM). No está permitida la venta o distribución sin autorización.
+
