@@ -35,7 +35,11 @@ void SysTick_Handler(void)
     uint32_t local = port_system_get_millis();
     port_system_set_millis(local + 1);
 }
-
+/**
+ * @brief This function handles Px10-Px15 global interrupts.
+ * First, this function identifies the line/ pin which has raised the interruption. Then, perform the desired action. Before leaving it cleans the interrupt pending register.
+ * 
+ */
 void EXTI15_10_IRQHandler(void)
 {
     // Verifica si hay una interrupción pendiente

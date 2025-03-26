@@ -7,7 +7,7 @@
  */
 
  #ifndef FSM_BUTTON_H_
- #define FSM_BUTTON_H_
+ #define FSM_BUTTON_H_ /*!< Variable */
  
  /* Includes ------------------------------------------------------------------*/
  /* Standard C includes */
@@ -19,6 +19,11 @@
  
  /* Defines and enums ----------------------------------------------------------*/
  /* Enums */
+
+ /**
+  * @brief Enum for the button FSM
+  * 
+  */
  enum FSM_BUTTON
  {
      BUTTON_RELEASED = 0,
@@ -29,60 +34,63 @@
  
  
  /* Typedefs --------------------------------------------------------------------*/
- typedef struct fsm_button_t fsm_button_t;
+ typedef struct fsm_button_t fsm_button_t; /*!< Variable */
  
  
  /* Function prototypes and explanation -------------------------------------------------*/
  
  /**
-  * @brief Create a new fsm_button_t object
+ * @brief Create a new button FSM. Reserve memory for the FSM and initialize it.
   * 
   * @param debounce_time_ms 
   * @param button_id 
   * @return fsm_button_t* 
   */
  fsm_button_t *fsm_button_new(uint32_t debounce_time_ms, uint32_t button_id);
- 
+
+
  /**
-  * @brief Destroy a button FSM object, This function is used to fire the button FSM. It is used to check the transitions and execute the actions of the button FSM.
-  * 
-  * @param p_fsm 
-  */
+ * @brief Destroy the FSM. Free the memory reserved for the FSM.
+ * 
+ * @param p_fsm 
+ */
  void fsm_button_destroy(fsm_button_t *p_fsm);
  
- /**
-  * @brief  Initialize the fsm_button_t object
-  * 
-  * @param p_fsm 
-  */
+/**
+ * @brief Fire the FSM. Call the fsm_fire function with the FSM pointer.
+ * 
+ * @param p_fsm 
+ */
  void fsm_button_fire(fsm_button_t *p_fsm);
  
  /**
-  * @brief Get the inner FSM of the button
-  * 
-  * @param p_fsm 
-  */
+ * @brief Get the inner FSM of the button.
+ * 
+ * @param p_fsm 
+ * @return fsm_t* 
+ */
  fsm_t *fsm_button_get_inner_fsm(fsm_button_t *p_fsm);
  
  /**
-  * @brief Get the current state of the FSM
-  * 
-  * @param p_fsm 
-  * @return uint32_t 
-  */
+ * @brief Get the state of the button FSM.
+ * 
+ * @param p_fsm 
+ * @return uint32_t 
+ */
  uint32_t fsm_button_get_state(fsm_button_t *p_fsm);
  
- /**
-  * @brief  Get the duration of the button press
-  * 
-  * @param p_fsm 
-  * @return uint32_t 
-  */
+ 
+/**
+ * @brief Get the duration of the button pressed.
+ * 
+ * @param p_fsm 
+ * @return uint32_t 
+ */
  uint32_t fsm_button_get_duration(fsm_button_t *p_fsm);
  
  
  /**
-  * @brief Reset the duration of the lasbutton press
+  * @brief Reset the duration of the button pressed to 0
   * 
   * @param p_fsm 
   */

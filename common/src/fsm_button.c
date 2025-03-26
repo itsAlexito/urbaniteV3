@@ -19,15 +19,18 @@
 #include "fsm_button.h"
 
 /* Structure fsm_button_t*/
-
+/**
+ * @brief Structure for the button FSM
+ * 
+ */
 struct fsm_button_t
 {
-    fsm_t f; /* Base struct for the FSM */
-    uint32_t debounce_time_ms; /* Debounce time in milliseconds */
-    uint32_t next_timeout; /* Next time out */
-    uint32_t tick_pressed; /* Tick pressed */
-    uint32_t duration; /* Duration */
-    uint32_t button_id; /* Button ID */
+    fsm_t f; /*!< Button FSM */
+    uint32_t debounce_time_ms; /*!< Debounce time in ms */
+    uint32_t next_timeout; /*!< Next timeout */
+    uint32_t tick_pressed; /*!<Number of ticks when the button was pressed*/
+    uint32_t duration; /*!< How much time the button has been pressed */
+    uint32_t button_id; /*!< Button ID. Must be unique */
 };
 
 /* State machine input or transition functions */   //INPUTTTTTT!!!!
@@ -92,7 +95,11 @@ static void do_set_duration(fsm_t *p_this)
     ((fsm_button_t *)p_this)->duration = port_system_get_millis() - ((fsm_button_t *)p_this)->tick_pressed;
     ((fsm_button_t *)p_this)->next_timeout = port_system_get_millis() + ((fsm_button_t *)p_this)->debounce_time_ms;
 }
-
+/**
+ * @brief Button FSM transitions table
+ * 
+ * @image html fsm_button.jpeg
+ */
 static fsm_trans_t fsm_trans_button[] = {
     {BUTTON_RELEASED, check_button_pressed, BUTTON_PRESSED_WAIT, do_store_tick_pressed},
     {BUTTON_PRESSED_WAIT, check_timeout, BUTTON_PRESSED, NULL},
@@ -104,6 +111,18 @@ static fsm_trans_t fsm_trans_button[] = {
 
 
 /* Other auxiliary functions */
+
+/**
+ * @brief Inialize the button FSM
+ * 
+ * This function initializes the button FSM with the received parameters and calls the port_button_init function to initialize the button.
+ * 
+ * This FSM implements a button with a debouncing time. The FSM has the following states:
+ * 
+ * @param p_fsm_button 
+ * @param debounce_time 
+ * @param button_id 
+ */
 static void fsm_button_init(fsm_button_t *p_fsm_button, uint32_t debounce_time, uint32_t button_id)
 {
     fsm_init(&p_fsm_button->f, fsm_trans_button);
@@ -122,13 +141,6 @@ static void fsm_button_init(fsm_button_t *p_fsm_button, uint32_t debounce_time, 
 
 /* Public functions -----------------------------------------------------------*/
 
-/**
- * @brief Create a new button FSM. Reserve memory for the FSM and initialize it.
- * 
- * @param debounce_time 
- * @param button_id 
- * @return fsm_button_t* 
- */
 fsm_button_t *fsm_button_new(uint32_t debounce_time, uint32_t button_id)
 {
     fsm_button_t *p_fsm_button = (fsm_button_t *)malloc(sizeof(fsm_button_t));  /* Do malloc to reserve memory of all other FSM elements, although it is interpreted as fsm_t (the first element of the structure) */
@@ -137,76 +149,41 @@ fsm_button_t *fsm_button_new(uint32_t debounce_time, uint32_t button_id)
 }
 
 
-/**
- * @brief Get the duration of the button pressed.
- * 
- * @param p_fsm 
- * @return uint32_t 
- */
 uint32_t fsm_button_get_duration(fsm_button_t *p_fsm)
 {
     return p_fsm->duration;
 }
 
-/**
- * @brief Reset the duration of the button pressed to 0.
- * 
- * @param p_fsm 
- */
 void fsm_button_reset_duration(fsm_button_t *p_fsm)
 {
     p_fsm->duration = 0;
 }
-/**
- * @brief Set the debounce time of the button.
- * 
- * @param p_fsm 
- * @return uint32_t 
- */
+
 uint32_t fsm_button_get_debounce_time_ms(fsm_button_t *p_fsm)
 {
     return p_fsm->debounce_time_ms;
 }
 /* FSM-interface functions. These functions are used to interact with the FSM */
 
-/**
- * @brief Fire the FSM. Call the fsm_fire function with the FSM pointer.
- * 
- * @param p_fsm 
- */
+
 void fsm_button_fire(fsm_button_t *p_fsm)
 {
     fsm_fire(&p_fsm->f); // Is it also possible to it in this way: fsm_fire((fsm_t *)p_fsm);
 }
 
-/**
- * @brief Destroy the FSM. Free the memory reserved for the FSM.
- * 
- * @param p_fsm 
- */
 void fsm_button_destroy(fsm_button_t *p_fsm)
 {
     free(&p_fsm->f);
 }
 
-/**
- * @brief Get the inner FSM of the button.
- * 
- * @param p_fsm 
- * @return fsm_t* 
- */
+
 fsm_t *fsm_button_get_inner_fsm(fsm_button_t *p_fsm)
 {
     return &p_fsm->f;
 }
 
 
-/**
- * @brief Get the state of the button FSM.
- * 
- * @param p_fsm 
- * @return uint32_t 
- */
+
 uint32_t fsm_button_get_state(fsm_button_t *p_fsm)
 {
     return p_fsm->f.current_state;

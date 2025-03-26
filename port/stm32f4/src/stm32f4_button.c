@@ -23,16 +23,23 @@
 
 
 /* Typedefs --------------------------------------------------------------------*/
+/**
+ * @brief Structure for the button hardware information.
+ * 
+ */
 typedef struct
 {
-    GPIO_TypeDef *p_port;
-    uint8_t pin;
-    uint8_t pupd_mode;
-    bool flag_pressed;
+    GPIO_TypeDef *p_port; /*!< Pointer of the GPIO port of the button*/
+    uint8_t pin; /*!< Pin number of the button on the GPIO port*/
+    uint8_t pupd_mode; /*!< Pull-up/pull-down mode of the button*/
+    bool flag_pressed; /*!< Flag indicating whether the button is pressed*/
 } stm32f4_button_hw_t; //name of the struct 
 
 /* Global variables ------------------------------------------------------------*/
-
+/**
+ * @brief Structure to define the HW dependencies of a button status.
+ * 
+ */
 static stm32f4_button_hw_t buttons_arr[] = {
     [PORT_PARKING_BUTTON_ID] = {.p_port = STM32F4_PARKING_BUTTON_GPIO, 
     .pin = STM32F4_PARKING_BUTTON_PIN,

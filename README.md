@@ -2,8 +2,8 @@
 
 ## Authors
 
-* **Alumno 1** - email: [alumno@alumno.es](mailto:alumno@alumno.es)
-* **Alumno 2** - email: [alumno@alumno.es](mailto:alumno@alumno.es)
+* **Álvaro San Emeterio** - email: [a.sanemeterio@alumnos.upm.es](mailto:alumno@alumno.es)
+* **Alejandro Barrio Domínguez** - email: [alejandro.barrio.dominguez@alumno.es](mailto:alumno@alumno.es)
 
 Ponga una breve descripción del proyecto **aquí** en castellano e inglés.
 

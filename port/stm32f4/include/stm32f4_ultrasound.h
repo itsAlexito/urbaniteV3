@@ -23,10 +23,10 @@
  * 
  */
 
-#define STM32F4_REAR_PARKING_SENSOR_TRIGGER_GPIO GPIOB
-#define STM32F4_REAR_PARKING_SENSOR_TRIGGER_PIN 0
-#define STM32F4_REAR_PARKING_SENSOR_ECHO_GPIO GPIOA
-#define STM32F4_REAR_PARKING_SENSOR_ECHO_PIN 1
+#define STM32F4_REAR_PARKING_SENSOR_TRIGGER_GPIO GPIOB /*!< GPIO Port connected to the trigger pin */
+#define STM32F4_REAR_PARKING_SENSOR_TRIGGER_PIN 0 /*!< Pin connected to the trigger pin */
+#define STM32F4_REAR_PARKING_SENSOR_ECHO_GPIO GPIOA /*!< GPIO Port connected to the echo pin */
+#define STM32F4_REAR_PARKING_SENSOR_ECHO_PIN 1 /*!< Pin connected to the echo pin */
 
 
 //-------------
