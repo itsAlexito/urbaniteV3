@@ -142,6 +142,9 @@
           "test_port_ultrasound_timer_trigger",
           "test_port_ultrasound_timer_echo",
           "test_port_ultrasound_timer_measurements",
+          "test_fsm_ultrasound",
+          "test_port_ultrasound"
+
         ]
       }
 		}

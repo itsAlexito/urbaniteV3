@@ -330,6 +330,7 @@ void port_ultrasound_reset_echo_ticks(uint32_t ultrasound_id)
 
 // Getters and setters functions
 
+
 bool port_ultrasound_get_trigger_ready(uint32_t ultrasound_id)
 {
     stm32f4_ultrasound_hw_t *p_ultrasound = _stm32f4_ultrasound_get(ultrasound_id);
@@ -377,6 +378,12 @@ void port_ultrasound_set_trigger_ready(uint32_t ultrasound_id, bool trigger_read
     p_ultrasound->trigger_ready = trigger_ready;
 }
 
+/**
+ * @brief 
+ * 
+ * @param ultrasound_id 
+ * @param trigger_end 
+ */
 void port_ultrasound_set_trigger_end(uint32_t ultrasound_id, bool trigger_end)
 {
     stm32f4_ultrasound_hw_t *p_ultrasound = _stm32f4_ultrasound_get(ultrasound_id);
