@@ -9,13 +9,15 @@
 /* Standard C includes */
 
 #include <stdio.h>
+#include <math.h>
+
+
+
+/* HW dependent includes */
 #include "port_display.h"
 #include "port_system.h"
 #include "stm32f4_system.h"
 #include "stm32f4_display.h"
-
-/* HW dependent includes */
-
 /* Microcontroller dependent includes */
 
 /* Defines --------------------------------------------------------------------*/
@@ -73,50 +75,60 @@ stm32f4_display_hw_t *_stm32f4_display_get(uint32_t display_id)
 
 void _timer_pwm_config(uint32_t display_id)
 {
-    // 1. Enable the clock source of the timer
+    // Paso 1: Activar el reloj del timer
+    RCC->APB1ENR |= RCC_APB1ENR_TIM4EN;
 
-    RCC->APB1ENR |= RCC_APB1ENR_TIM4EN; // Enable the clock for TIM4, we use APB1
-    
-    // 2. Disable the counter (register CR1) and enable the autoreload preaload (bit ARPE)
-    TIM4->CR1 = 0x0000 ; /* Aunque es el valor por defecto */
-    TIM4->CR1 &= ~TIM_CR1_CEN;  /* TIM_CR1_CEN is !<Counter enable */
-    TIM4->CR1 |= TIM_CR1_ARPE;  /* TIM_CR1_ARPE is !<Auto-reload preload enable, con esto, al activar ARPE, los cambios en ARR solo funcionan cuando el temporizador se reincia */
+    // Paso 2: Deshabilitar el contador y habilitar ARPE (auto-reload preload)
+    TIM4->CR1 = 0x0000;
+    TIM4->CR1 &= ~TIM_CR1_CEN;
+    TIM4->CR1 |= TIM_CR1_ARPE;
 
-    // 3. Reset the counter (register CNT), set the autoreload value (register ARR) and the prescaler (register PSC) for a frequency of 50 Hz.
-    TIM4->CNT = 0; // Reset the counter
-    TIM4->PSC = 0; // Set the prescaler to 0
+    // Paso 3: Configurar ARR, PSC y CNT para 50Hz (TPWM = 20ms)
+    TIM4->CNT = 0;
 
-    double system_clock = (double)SystemCoreClock;
-    double pwm_frequency = (double)PORT_DISPLAY_FREC_MS; // 50 Hz
-    double pwm_frequency_s = pwm_frequency * 1e-3; // Convert to seconds
+    double freq_ms = PORT_DISPLAY_FREC_MS; // 20 ms
+    double t_pwm_s = freq_ms / 1000.0;
+    double f_clk = SystemCoreClock;
 
-    double psc = round((system_clock * pwm_frequency_s / 65536.0) - 1.0); // Compute an initial value for the PSC register considering the maximum value of ARR (65535.0)
-    double arr = round((system_clock * pwm_frequency_s / (psc + 1.0)) - 1.0); // Compute an initial value for the ARR register
-    if (arr > 65535.0) //NOTE: 65535 is like 0xFFFF
+    double psc_d = round((f_clk * t_pwm_s) / 65536.0 - 1.0);
+    double arr_d = round((f_clk * t_pwm_s) / (psc_d + 1.0) - 1.0);
+    if (arr_d > 65535.0)
     {
-        psc += 1.0; // Increment the PSC register to reduce the ARR value
-        arr = round((system_clock * pwm_frequency_s / (psc + 1.0)) - 1.0);
+        psc_d += 1.0;
+        arr_d = round((f_clk * t_pwm_s) / (psc_d + 1.0) - 1.0);
     }
-    // Set the prescaler and the auto reload register
-    TIM4->PSC = (uint32_t)psc;
-    TIM4->ARR = (uint32_t)arr;
 
-    //5. Disable the output compare (register CCER) for each one of the corresponding channels. Take into account the channel number (1, 2, 3, or 4) and the channel enable bit (CCxE)
-    TIM4->CCER &= ~(TIM_CCER_CC1E | TIM_CCER_CC2E | TIM_CCER_CC3E | TIM_CCER_CC4E); // Disable the output compare for all channels
+    TIM4->PSC = (uint32_t)psc_d;
+    TIM4->ARR = (uint32_t)arr_d;
 
-    // 6. Clear the P and NP bits (CCxP and CCxNP) of the output compare register (CCER) for each one of the corresponding channels.
-    TIM4->CCER &= ~(TIM_CCER_CC1P | TIM_CCER_CC2P | TIM_CCER_CC3P | TIM_CCER_CC4P); // Clear the P and NP bits for all channels
+    // Paso 8: Generar evento de actualización para cargar ARR y PSC
+    TIM4->EGR = TIM_EGR_UG;
 
-    // 7. Set both (i) mode PWM 1, and (ii) enable preload (register CCMRx) for each one of the corresponding channels.
-    //To set the mode PWM to mode 1 you must set the bits OCxM in the CCMRx register to the corresponding values according to the explanations of the manufacturer
-    //To enable the preload you must set the bit OCxPE to 1 in the same register.
+    // Paso 5: Deshabilitar salida de canales
+    TIM4->CCER &= ~(TIM_CCER_CC1E | TIM_CCER_CC2E | TIM_CCER_CC3E);
 
-    TIM4->CCMR1 |= TIM_AS_PWM1_MASK; // Set PWM mode 1 for channel 1
-    TIM4->CCMR1 |= TIM_CCMR1_OC1PE; // Enable preload for channel 1
+    // Paso 6: Limpiar bits de polaridad (P y NP)
+    TIM4->CCER &= ~(TIM_CCER_CC1P | TIM_CCER_CC2P | TIM_CCER_CC3P);
 
-    // 8. Generate an update event (register EGR) by setting the UG bit. This will load the values of the ARR and PSC registers into the active registers.
-    TIM4->EGR |= TIM_EGR_UG;  /*!<Update Generation                         */
+    // Paso 7: Configurar modo PWM1 y activar preload para cada canal
+    // CH1 (Rojo)
+    TIM4->CCMR1 &= ~TIM_CCMR1_OC1M_Msk;
+    TIM4->CCMR1 |= TIM_CCMR1_OC1M_1 | TIM_CCMR1_OC1M_2; // PWM Mode 1
+    TIM4->CCMR1 |= TIM_CCMR1_OC1PE;
+
+    // CH3 (verde)
+    TIM4->CCMR2 &= ~TIM_CCMR2_OC3M_Msk;
+    TIM4->CCMR2 |= TIM_CCMR2_OC3M_1 | TIM_CCMR2_OC3M_2; // PWM Mode 1
+    TIM4->CCMR2 |= TIM_CCMR2_OC3PE;
+
+    // CH4  (azul)
+    TIM4->CCMR2 &= ~TIM_CCMR2_OC4M_Msk;
+    TIM4->CCMR2 |= TIM_CCMR2_OC4M_1 | TIM_CCMR2_OC4M_2; // PWM Mode 1
+    TIM4->CCMR2 |= TIM_CCMR2_OC4PE;
+
+    // ¡No activar el timer ni CCER aquí! Se hace en port_display_set_rgb
 }
+
 
 void port_display_init(uint32_t display_id)
 {
@@ -172,29 +184,33 @@ void port_display_set_rgb(uint32_t display_id, rgb_color_t color)
 
         // RED CHANNEL (CH1)
         // Set the duty cycle for the red channel
-        if (r == 0){TIM4->CCER &= ~TIM_CCER_CC1E;}
+        if (r == 0)
+        {TIM4->CCER &= ~TIM_CCER_CC1E;
+        }
         else
         {
-            TIM4->CCR1 = r; // Duty cycle proporcional (0-255)
+            TIM4->CCR1 =  ((uint32_t)r * (TIM4->ARR + 1)) / PORT_DISPLAY_RGB_MAX_VALUE;
             TIM4->CCER |= TIM_CCER_CC1E; // Enable the output for channel 1
         }
 
-        // GREEN CHANNEL (CH1)
+        // GREEN CHANNEL (CH3)
         // Set the duty cycle for the red channel
-        if (g == 0){TIM4->CCER &= ~TIM_CCER_CC2E;}
+        if (g == 0){TIM4->CCER &= ~TIM_CCER_CC3E;}
         else
         {
-            TIM4->CCR2 = g;
-            TIM4->CCER |= TIM_CCER_CC2E; // Enable the output for channel 2
+            TIM4->CCR3 = ((uint32_t)g * (TIM4->ARR + 1)) / PORT_DISPLAY_RGB_MAX_VALUE;
+            TIM4->CCER |= TIM_CCER_CC3E; // Enable the output for channel 3
         }
 
-        // BLUE CHANNEL (CH1)
-        // Set the duty cycle for the red channel
-        if (b == 0){TIM4->CCER &= ~TIM_CCER_CC3E;}
+        // BLUE CHANNEL (CH4)
+        // Set the duty cycle for the blue channel
+        if (b == 0)
+        {TIM4->CCER &= ~TIM_CCER_CC4E;
+        }
         else
         {
-            TIM4->CCR3 = b;
-            TIM4->CCER |= TIM_CCER_CC3E; // Enable the output for channel 3
+            TIM4->CCR4 = ((uint32_t)b * (TIM4->ARR + 1)) / PORT_DISPLAY_RGB_MAX_VALUE;
+            TIM4->CCER |= TIM_CCER_CC4E; // Enable the output for channel 3
         }
 
         // Forzar actualización y reactivar el temporizador
