@@ -23,14 +23,14 @@ typedef struct {
 
 /* Defines and enums ----------------------------------------------------------*/
 /* Defines */
-#define PORT_REAR_PARKING_DISPLAY_ID   0
+#define PORT_REAR_PARKING_DISPLAY_ID 0
 #define PORT_DISPLAY_RGB_MAX_VALUE 255
-#define COLOR_RED       (rgb_color_t){255, 0, 0}       /*!<Rojo (danger) */
-#define COLOR_YELLOW    (rgb_color_t){255, 255, 0}     /*!< Amarillo (warning) */
-#define COLOR_GREEN     (rgb_color_t){0, 255, 0}       /*!< Verde (no problem) */
-#define COLOR_TURQUOISE (rgb_color_t){64, 224, 208}    /*!< Turquesa (Info) */
-#define COLOR_BLUE      (rgb_color_t){0, 0, 255}       /*!< Azul (Info) */
-#define COLOR_OFF       (rgb_color_t){0, 0, 0}         /*!< Apagado (off) */
+#define COLOR_RED       (rgb_color_t){255, 0, 0}           /*!< Rojo (danger)        */
+#define COLOR_YELLOW    (rgb_color_t){94, 94, 0}           /*!< Amarillo (warning)   */
+#define COLOR_GREEN     (rgb_color_t){0, 255, 0}           /*!< Verde (no problem)   */
+#define COLOR_TURQUOISE (rgb_color_t){25, 89, 82}          /*!< Turquesa (info)      */
+#define COLOR_BLUE      (rgb_color_t){0, 0, 255}           /*!< Azul (OK)            */
+#define COLOR_OFF       (rgb_color_t){0, 0, 0}             /*!< Apagado (inactive)   */
 #define PORT_DISPLAY_FREC_MS 20 /*!< Frequency of the display in ms  (50 HZ)*/
 
 /* Function prototypes and explanation -------------------------------------------------*/

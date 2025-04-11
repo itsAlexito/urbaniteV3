@@ -26,7 +26,7 @@ enum FSM_DISPLAY_SYSTEM
 
 
 /* Defines and enums ----------------------------------------------------------*/
-#define DANGER_MIN_CM  0//PREGUNTAR
+#define DANGER_MIN_CM  0
 #define WARNING_MIN_CM  25
 #define NO_PROBLEM_MIN_CM  50
 #define INFO_MIN_CM  150
@@ -119,7 +119,9 @@ fsm_t *fsm_display_get_inner_fsm(fsm_display_t *p_fsm);
 uint32_t fsm_display_get_state(fsm_display_t *p_fsm);
 
 /**
- * @brief 
+ * @brief this function set the state of the FSM display system
+ * This function sets the current state of the display FSM.
+ * This function is important because the struct is private and external functions such as those of the unit tests cannot access the state of the FSM directly.
  * 
  * @param p_fsm 
  * @param state 

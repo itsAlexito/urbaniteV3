@@ -43,41 +43,29 @@ void _compute_display_levels(rgb_color_t *p_color, int32_t distance_cm)
 {
     if (p_color == NULL) return;
 
-    if (distance_cm >= DANGER_MIN_CM && distance_cm <= WARNING_MIN_CM) //rojo
+    if (distance_cm >= DANGER_MIN_CM && distance_cm <= WARNING_MIN_CM) // rojo
     {
-        p_color->r = PORT_DISPLAY_RGB_MAX_VALUE;    // 100%
-        p_color->g = 0;
-        p_color->b = 0;
+        *p_color = COLOR_RED; 
     }
-    else if (distance_cm > WARNING_MIN_CM && distance_cm <= NO_PROBLEM_MIN_CM) //amarillo
+    else if (distance_cm > WARNING_MIN_CM && distance_cm <= NO_PROBLEM_MIN_CM) // amarillo
     {
-        p_color->r = (PORT_DISPLAY_RGB_MAX_VALUE * 93) / 100;
-        p_color->g = (PORT_DISPLAY_RGB_MAX_VALUE * 93) / 100;
-        p_color->b = 0;
+        *p_color = COLOR_YELLOW; 
     }
-    else if (distance_cm > NO_PROBLEM_MIN_CM && distance_cm <= INFO_MIN_CM) //verde
+    else if (distance_cm > NO_PROBLEM_MIN_CM && distance_cm <= INFO_MIN_CM) // verde
     {
-        p_color->r = 0;
-        p_color->g = PORT_DISPLAY_RGB_MAX_VALUE;
-        p_color->b = 0;
+        *p_color = COLOR_GREEN; 
     }
-    else if (distance_cm > INFO_MIN_CM && distance_cm <= OK_MIN_CM) //turquesa
+    else if (distance_cm > INFO_MIN_CM && distance_cm <= OK_MIN_CM) // turquesa
     {
-        p_color->r = (PORT_DISPLAY_RGB_MAX_VALUE * 10) / 100;
-        p_color->g = (PORT_DISPLAY_RGB_MAX_VALUE * 35) / 100;
-        p_color->b = (PORT_DISPLAY_RGB_MAX_VALUE * 32) / 100;
+        *p_color = COLOR_TURQUOISE; 
     }
-    else if (distance_cm > OK_MIN_CM && distance_cm <= OK_MAX_CM) //azul
+    else if (distance_cm > OK_MIN_CM && distance_cm <= OK_MAX_CM) // azul
     {
-        p_color->r = 0;
-        p_color->g = 0;
-        p_color->b = PORT_DISPLAY_RGB_MAX_VALUE;
+        *p_color = COLOR_BLUE; 
     }
     else
     {
-        p_color->r = 0;
-        p_color->g = 0;
-        p_color->b = 0;
+        *p_color = COLOR_OFF; // no color
     }
 }
 
@@ -106,6 +94,7 @@ static bool check_active(fsm_t *p_this)
 static bool check_set_new_color(fsm_t *p_this)
 {
     fsm_display_t *p_fsm_display = (fsm_display_t *)p_this;
+    printf("check_set_new_color: new_color=%d\n", p_fsm_display->new_color);
     return p_fsm_display->new_color;
 }
 
@@ -147,7 +136,8 @@ static void do_set_color(fsm_t *p_this)
     fsm_display_t *p_fsm_display = (fsm_display_t *)p_this;
     rgb_color_t color;
     _compute_display_levels(&color, p_fsm_display->distance_cm);
-    //✅ 2. Call function port_display_set_rgb() with the RGB LED ID and the color
+    printf(" Medida de la distanci: %lu, Colores medidos: R=%d, G=%d, B=%d\n", 
+        (unsigned long)p_fsm_display->distance_cm, color.r, color.g, color.b);    //✅ 2. Call function port_display_set_rgb() with the RGB LED ID and the color
     port_display_set_rgb(p_fsm_display->display_id, color);
     //✅ 3. Reset the flag new_color to indicate that the color has been set
     p_fsm_display->new_color = false;
@@ -184,7 +174,7 @@ static void fsm_display_init(fsm_display_t *p_fsm_display, uint32_t display_id)
     //1. Call the fsm_init() to initialize the FSM. Pass the address of the fsm_t struct and the transition table.
     fsm_init(&p_fsm_display->f, fsm_trans_display);
     //2. Initialize the distance_id
-    //3. Set thedistance_cmto-1or any other invalid value in the range of the distance. 
+    //3. Set thedistance_cm to-1 or any other invalid value in the range of the distance. 
     p_fsm_display->distance_cm = -1;
     //4. Initialize the flagsnew_color, status, and idle to false
     p_fsm_display->new_color = false;
@@ -218,8 +208,11 @@ fsm_display_t *fsm_display_new(uint32_t display_id)
 
 void fsm_display_fire(fsm_display_t *p_fsm)
 {
+    printf("fsm_display_fire: current_state=%d\n", fsm_get_state(&p_fsm->f));
     // Call the fire function of the FSM
     fsm_fire(&p_fsm->f);
+    printf("fsm_display_fire: new_state=%d\n", fsm_get_state(&p_fsm->f));
+   
 }
 
 
@@ -259,5 +252,18 @@ void fsm_display_set_status(fsm_display_t *p_fsm, bool status)
     //1. Update the field status with the new value.
     p_fsm->status = status;
 }
+
+void fsm_display_set_state(fsm_display_t *p_fsm, int8_t state)
+{
+    //1. Call function fsm_set_state() with the address of the f field of the struct and the new state.
+    fsm_set_state(&p_fsm->f, state);
+}
+
+bool fsm_display_check_activity(fsm_display_t *p_fsm)
+{
+    //Return true if the display system is active and it is not idle. Otherwise, return false.
+    return (p_fsm->status && !p_fsm->idle);
+}
+
 
 

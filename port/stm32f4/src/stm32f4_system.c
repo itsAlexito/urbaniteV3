@@ -275,7 +275,7 @@ void stm32f4_system_gpio_config_exti(GPIO_TypeDef *p_port, uint8_t pin, uint32_t
     EXTI->IMR |= BIT_POS_TO_MASK(pin);
   }
 
-  //PREGUNTAR
+  
   /*  Read the value of the PR register of the EXTI peripheral associated with the button pin*/
   EXTI -> PR &= BIT_POS_TO_MASK(pin);
   if(mode & STM32F4_TRIGGER_ENABLE_INTERR_REQ)
