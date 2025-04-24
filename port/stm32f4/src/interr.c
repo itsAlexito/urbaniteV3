@@ -42,6 +42,8 @@ void SysTick_Handler(void)
  */
 void EXTI15_10_IRQHandler(void)
 {
+    // Reactivar el contador del sistema SysTick
+    port_system_systick_resume();
     // Verifica si hay una interrupción pendiente
     if (port_button_get_pending_interrupt(PORT_PARKING_BUTTON_ID))
     {
@@ -92,6 +94,9 @@ void TIM3_IRQHandler(void){
  * 
  */
 void TIM2_IRQHandler(void){
+
+    //Reactivar el contador del sistema SysTick
+    port_system_systick_resume();
 
     /*✅ 1. Check if the UIF flag is set. If so, this means that the ARR register has overflowed. In this case:nbsp;
     Increment the echo_overflows counter. To do this, use the functions port_ultrasound_set_echo_overflows() and port_ultrasound_get_echo_overflows() with the corresponding ultrasound ID and the incremented value.

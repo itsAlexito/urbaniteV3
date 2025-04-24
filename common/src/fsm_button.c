@@ -72,6 +72,17 @@ static bool check_timeout(fsm_t *p_this)
 }
 
 
+
+//------------------V4------------------//
+
+bool fsm_button_check_activity(fsm_button_t *p_fsm)
+{
+//✅ 1. Get the field current_state of the FSM (field f of the struct).
+    uint32_t current_state = p_fsm->f.current_state;
+//✅ 2. Return false if the current state is BUTTON_RELEASED. Otherwise, return true.
+    return (current_state != BUTTON_RELEASED); // true if the button is pressed, false if it is released
+}
+
 /* State machine output or action functions */ //OUTPUTTTTT!!!!
 
 /**

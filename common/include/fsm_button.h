@@ -107,13 +107,15 @@
  
  
  /**
-  * @brief 
+  * @brief Check if the button FSM is active, or not.
+  * The button is inactive when it is in the status BUTTON_RELEASED.
+
   * 
   * @param p_fsm 
   * @return true 
   * @return false 
   */
- bool fsm_check_activity(fsm_button_t *p_fsm);
+ bool fsm_button_check_activity(fsm_button_t *p_fsm);
  
  
  

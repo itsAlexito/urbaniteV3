@@ -347,6 +347,12 @@ bool fsm_ultrasound_get_new_measurement_ready(fsm_ultrasound_t *p_fsm)
     return p_fsm->new_measurement;
 }
 
+//-------------------v4------------------------------------------------
+bool fsm_ultrasound_check_activity(fsm_ultrasound_t *p_fsm)
+{
+    //✅ 1. Return false always.
+    return false;
+}
 
 // ------------------Other auxiliary functions------------------------
 void fsm_ultrasound_set_state(fsm_ultrasound_t *p_fsm, int8_t state)

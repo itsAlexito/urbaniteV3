@@ -94,7 +94,6 @@ static bool check_active(fsm_t *p_this)
 static bool check_set_new_color(fsm_t *p_this)
 {
     fsm_display_t *p_fsm_display = (fsm_display_t *)p_this;
-    printf("check_set_new_color: new_color=%d\n", p_fsm_display->new_color);
     return p_fsm_display->new_color;
 }
 
@@ -136,8 +135,6 @@ static void do_set_color(fsm_t *p_this)
     fsm_display_t *p_fsm_display = (fsm_display_t *)p_this;
     rgb_color_t color;
     _compute_display_levels(&color, p_fsm_display->distance_cm);
-    printf(" Medida de la distanci: %lu, Colores medidos: R=%d, G=%d, B=%d\n", 
-        (unsigned long)p_fsm_display->distance_cm, color.r, color.g, color.b);    //✅ 2. Call function port_display_set_rgb() with the RGB LED ID and the color
     port_display_set_rgb(p_fsm_display->display_id, color);
     //✅ 3. Reset the flag new_color to indicate that the color has been set
     p_fsm_display->new_color = false;
@@ -174,6 +171,7 @@ static void fsm_display_init(fsm_display_t *p_fsm_display, uint32_t display_id)
     //1. Call the fsm_init() to initialize the FSM. Pass the address of the fsm_t struct and the transition table.
     fsm_init(&p_fsm_display->f, fsm_trans_display);
     //2. Initialize the distance_id
+    p_fsm_display->display_id = display_id;
     //3. Set thedistance_cm to-1 or any other invalid value in the range of the distance. 
     p_fsm_display->distance_cm = -1;
     //4. Initialize the flagsnew_color, status, and idle to false
@@ -208,10 +206,8 @@ fsm_display_t *fsm_display_new(uint32_t display_id)
 
 void fsm_display_fire(fsm_display_t *p_fsm)
 {
-    printf("fsm_display_fire: current_state=%d\n", fsm_get_state(&p_fsm->f));
     // Call the fire function of the FSM
     fsm_fire(&p_fsm->f);
-    printf("fsm_display_fire: new_state=%d\n", fsm_get_state(&p_fsm->f));
    
 }
 
@@ -262,7 +258,7 @@ void fsm_display_set_state(fsm_display_t *p_fsm, int8_t state)
 bool fsm_display_check_activity(fsm_display_t *p_fsm)
 {
     //Return true if the display system is active and it is not idle. Otherwise, return false.
-    return (p_fsm->status && !p_fsm->idle);
+    return (p_fsm->status && !p_fsm->idle); // Display system is active and not idle
 }
 
 

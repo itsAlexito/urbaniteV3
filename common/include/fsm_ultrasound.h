@@ -158,9 +158,25 @@ fsm_t *fsm_ultrasound_get_inner_fsm(fsm_ultrasound_t *p_fsm);
  */
 uint32_t fsm_ultrasound_get_state(fsm_ultrasound_t *p_fsm);
 
+/**
+ * @brief Set the state of the ultrasound FSM
+ * This function sets the current state of the ultrasound FSM.
+ * 💡 This function is important because the struct is private and external functions such as those of the unit tests cannot access the state of the FSM directly.
+ * 
+ * @param p_fsm 
+ * @param state 
+ */
 void fsm_ultrasound_set_state(fsm_ultrasound_t *p_fsm, int8_t state);
 
-bool fsm_ultraosound_check_activity(fsm_ultrasound_t *p_fsm);
+/**
+ * @brief Check if the ultrasound sensor is doing a distance measurement.
+ * The ultrasound sensor is always inactive because all the transitions are due to HW interrupts.
+ * 
+ * @param p_fsm 
+ * @return true 
+ * @return false 
+ */
+bool fsm_ultrasound_check_activity(fsm_ultrasound_t *p_fsm);
 
 
 
