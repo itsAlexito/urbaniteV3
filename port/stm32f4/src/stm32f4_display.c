@@ -101,7 +101,6 @@ void _timer_pwm_config(uint32_t display_id)
     TIM4->PSC = (uint32_t)psc_d;
     TIM4->ARR = (uint32_t)arr_d;
 
-    printf("_timer_pwm_config: PSC=%lu, ARR=%lu\n", TIM4->PSC, TIM4->ARR);
 
 
     // Paso 8: Generar evento de actualización para cargar ARR y PSC
@@ -164,11 +163,9 @@ void port_display_set_rgb(uint32_t display_id, rgb_color_t color)
          uint8_t r = color.r;
          uint8_t g = color.g;
          uint8_t b = color.b;
-         printf("Color values: R=%d, G=%d, B=%d\n", r, g, b);
 
         // Desactivar el temporizador
         TIM4->CR1 &= ~TIM_CR1_CEN;  //no pasa de esta linea para abajo
-        printf("HE PASADO POR AQUÍ\n");
 
 
        // if all values are 0, turn off the RGB LED
@@ -187,7 +184,6 @@ void port_display_set_rgb(uint32_t display_id, rgb_color_t color)
         else
         {
             TIM4->CCR1 =  ((uint32_t)r * (TIM4->ARR + 1)) / PORT_DISPLAY_RGB_MAX_VALUE;
-            printf("CCR1 Value: %lu\n", TIM4->CCR1);
             TIM4->CCER |= TIM_CCER_CC1E; // Enable the output for channel 1
         }
 
@@ -197,7 +193,6 @@ void port_display_set_rgb(uint32_t display_id, rgb_color_t color)
         else
         {
             TIM4->CCR3 = ((uint32_t)g * (TIM4->ARR + 1)) / PORT_DISPLAY_RGB_MAX_VALUE;
-            printf("CCR3 Value: %lu\n", TIM4->CCR3);
             TIM4->CCER |= TIM_CCER_CC3E; // Enable the output for channel 3
         }
 
@@ -209,7 +204,6 @@ void port_display_set_rgb(uint32_t display_id, rgb_color_t color)
         else
         {
             TIM4->CCR4 = ((uint32_t)b * (TIM4->ARR + 1)) / PORT_DISPLAY_RGB_MAX_VALUE;
-            printf("CCR4 Value: %lu\n", TIM4->CCR4);
             TIM4->CCER |= TIM_CCER_CC4E; // Enable the output for channel 3
         }
 
