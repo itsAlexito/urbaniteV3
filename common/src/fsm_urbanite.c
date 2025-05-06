@@ -163,7 +163,7 @@ static void do_stop_urbanite(fsm_t *p_this)
     //✅ 4. If the system is paused, remove the pause status to avoid the system to turn ON again with the display paused.
     if (p_fsm_urbanite->is_paused)
     {
-        fsm_display_set_status(p_fsm_urbanite->p_fsm_display_rear, false);
+        fsm_display_set_status(p_fsm_urbanite->p_fsm_display_rear, true);
         p_fsm_urbanite->is_paused = false;
     }
     //✅ 5. Print a message to help yourself to debug and log the status of the system. You could do something like:
@@ -271,10 +271,10 @@ static fsm_trans_t fsm_trans_urbanite[] = {
     { OFF, check_no_activity, SLEEP_WHILE_OFF, do_sleep_off }, //
     { SLEEP_WHILE_OFF, check_activity, OFF, NULL }, //
     { SLEEP_WHILE_OFF, check_no_activity, SLEEP_WHILE_OFF, do_sleep_while_off },//
-    { MEASURE, check_off, OFF, do_stop_urbanite }, //
-    { MEASURE, check_pause_display, MEASURE, do_pause_display }, //
     { MEASURE, check_new_measure, MEASURE, do_display_distance }, //
+    { MEASURE, check_pause_display, MEASURE, do_pause_display }, //
     { MEASURE, check_no_activity, SLEEP_WHILE_ON, do_sleep_while_measure }, //
+    { MEASURE, check_off, OFF, do_stop_urbanite }, //
     { SLEEP_WHILE_ON, check_activity_in_measure, MEASURE, NULL }, //
     { SLEEP_WHILE_ON, check_no_activity, SLEEP_WHILE_ON, do_sleep_while_on },
     { -1, NULL, -1, NULL },

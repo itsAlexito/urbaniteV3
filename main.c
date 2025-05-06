@@ -21,7 +21,7 @@
 
 /* Defines ------------------------------------------------------------------*/
 #define URBANITE_ON_OFF_PRESS_TIME_MS 1000 /*!< Time in ms to turn on/off the Urbanite */
-#define URBANITE_PAUSE_DISPLAY_TIME_MS 500 /*!< Time in ms to pause the display of the Urbanite */
+#define URBANITE_PAUSE_DISPLAY_TIME_MS 200 /*!< Time in ms to pause the display of the Urbanite */
 
 /**
  * @brief  The application entry point.
