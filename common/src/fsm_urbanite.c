@@ -176,9 +176,14 @@ static void do_pause_display(fsm_t* p_this)
     fsm_urbanite_t *p_fsm_urbanite = (fsm_urbanite_t *)p_this;
     fsm_button_reset_duration(p_fsm_urbanite->p_fsm_button);
     //✅ 2. Invert the pause status. If the system is paused, set the pause status to false. If the system is not paused, set the pause status to true.
-    p_fsm_urbanite->is_paused = !p_fsm_urbanite->is_paused;
+    if (p_fsm_urbanite-> is_paused== true){
+            p_fsm_urbanite->is_paused = false;
+    }
+    else{
+            p_fsm_urbanite->is_paused = true;
+    }
     //✅ 3. Activate or deactivate the display depending on the new pause status by calling fsm_display_set_status() with the right parameter.
-    fsm_display_set_status(p_fsm_urbanite->p_fsm_display_rear, p_fsm_urbanite->is_paused);
+    fsm_display_set_status(p_fsm_urbanite->p_fsm_display_rear, !p_fsm_urbanite->is_paused);
     //✅ 4. Print status depending on the pause status. You could print messages like:
     if (p_fsm_urbanite->is_paused)
     {

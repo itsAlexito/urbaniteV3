@@ -243,10 +243,10 @@ bool fsm_display_get_status(fsm_display_t *p_fsm)
     return p_fsm->status;
 }
 
-void fsm_display_set_status(fsm_display_t *p_fsm, bool status)
+void fsm_display_set_status(fsm_display_t *p_fsm, bool pause)
 {
     //1. Update the field status with the new value.
-    p_fsm->status = status;
+    p_fsm->status = pause;
 }
 
 void fsm_display_set_state(fsm_display_t *p_fsm, int8_t state)

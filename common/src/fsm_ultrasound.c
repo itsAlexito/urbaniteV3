@@ -10,6 +10,7 @@
 /* Standard C includes */
 #include <stdlib.h>
 #include <string.h>
+
 #include "port_ultrasound.h"
 #include "port_system.h"
 #include "fsm.h"
@@ -49,10 +50,13 @@ int _compare(const void *a, const void *b)
  * @return true 
  * @return false 
  */
+
 static bool check_on(fsm_t *p_this)
 {
-    return port_ultrasound_get_trigger_ready(((fsm_ultrasound_t *)p_this)->ultrasound_id);
+    fsm_ultrasound_t *p_fsm = (fsm_ultrasound_t *)p_this;
+    return p_fsm->status && port_ultrasound_get_trigger_ready(p_fsm->ultrasound_id);
 }
+
 
 static bool check_off(fsm_t *p_this)
 {
@@ -164,21 +168,18 @@ static void do_set_distance(fsm_t *p_this)
     // 5. If buffer full (last slot)
     if (p_fsm->distance_idx == FSM_ULTRASOUND_NUM_MEASUREMENTS - 1)
     {
-        // 5a. Sort array
         qsort(p_fsm->distance_arr, FSM_ULTRASOUND_NUM_MEASUREMENTS, sizeof(uint32_t), _compare);
 
-        // 6. Compute median
-        if (FSM_ULTRASOUND_NUM_MEASUREMENTS % 2 == 0) // Even
+        if (FSM_ULTRASOUND_NUM_MEASUREMENTS % 2 == 0)
         {
             p_fsm->distance_cm = (p_fsm->distance_arr[FSM_ULTRASOUND_NUM_MEASUREMENTS / 2 - 1] +
                                   p_fsm->distance_arr[FSM_ULTRASOUND_NUM_MEASUREMENTS / 2]) / 2;
         }
-        else // Odd
+        else
         {
             p_fsm->distance_cm = p_fsm->distance_arr[FSM_ULTRASOUND_NUM_MEASUREMENTS / 2];
         }
 
-        // 7. Set new measurement flag
         p_fsm->new_measurement = true;
     }
 

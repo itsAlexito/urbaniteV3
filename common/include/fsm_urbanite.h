@@ -22,10 +22,10 @@ typedef struct fsm_urbanite_t fsm_urbanite_t; /*!< Variable */
 
 /* Enums */
 enum FSM_URBANITE {
-    OFF = 0,
-    MEASURE,
-    SLEEP_WHILE_OFF,
-    SLEEP_WHILE_ON
+    OFF = 0, /*!< Starting state. Also comes here when the button has been pressed for the required time to turn off the urbanite */   
+    MEASURE, /*!< State to measure the distance to the obstacles */
+    SLEEP_WHILE_OFF, /*!< State to start the low power mode while the urbanite is off*/
+    SLEEP_WHILE_ON /*!< State to start the low power mode while the urbanite is on*/
 };
 
 
