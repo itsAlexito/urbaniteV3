@@ -17,10 +17,6 @@
 
 /* Defines and enums ----------------------------------------------------------*/
 /* Enums */
-/**
-  * @brief Enumerator for the display system finite state machine.
-  * 
-  */
 enum FSM_DISPLAY_SYSTEM
 {
     WAIT_DISPLAY = 0,
@@ -30,12 +26,12 @@ enum FSM_DISPLAY_SYSTEM
 
 
 /* Defines and enums ----------------------------------------------------------*/
-#define DANGER_MIN_CM  0        /*!< Minimum distance in cm to show the DANGER status*/
-#define WARNING_MIN_CM  25      /*!< Minimum distance in cm to show the WARNING status*/
-#define NO_PROBLEM_MIN_CM  50   /*!< Minimum distance in cm to show the NO_PROBLEM status*/
-#define INFO_MIN_CM  150        /*!< Minimum distance in cm to show the INFO status*/
-#define OK_MIN_CM  175          /*!< Minimum distance in cm to show the OK status*/
-#define OK_MAX_CM  200          /*!< Maximum distance in cm to show the OK status*/
+#define DANGER_MIN_CM  0
+#define WARNING_MIN_CM  25
+#define NO_PROBLEM_MIN_CM  50
+#define INFO_MIN_CM  150
+#define OK_MIN_CM  175
+#define OK_MAX_CM  200
 
 /* Typedefs --------------------------------------------------------------------*/
 typedef struct fsm_display_t fsm_display_t; /*!< Variable */
