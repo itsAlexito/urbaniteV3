@@ -22,6 +22,10 @@
 /* Project includes */
 
 /* Struct */
+/**
+ * @brief Structure to define the Ultrasound FSM.
+ * 
+ */
 struct fsm_ultrasound_t
 {
     fsm_t f; /*!< Ultrasound FSM */
@@ -36,6 +40,15 @@ struct fsm_ultrasound_t
 
 /* Private functions -----------------------------------------------------------*/
 // Comparison function for qsort
+
+/**
+ * @brief Compare function to sort arrays.
+ * This function is used to compare two elements. It will be used for the qsort() function to sort the array of distances.
+ * 
+ * @param a
+ * @param b
+ * @return int Result of the comparison.
+ */
 int _compare(const void *a, const void *b)
 {
     return (*(uint32_t *)a - *(uint32_t *)b);
@@ -50,19 +63,25 @@ int _compare(const void *a, const void *b)
  * @return true 
  * @return false 
  */
-
 static bool check_on(fsm_t *p_this)
 {
     fsm_ultrasound_t *p_fsm = (fsm_ultrasound_t *)p_this;
     return p_fsm->status && port_ultrasound_get_trigger_ready(p_fsm->ultrasound_id);
 }
 
-
+/**
+ * @brief Check if the ultrasound sensor has been set to be inactive (OFF).
+ * 
+ * @param p_this 
+ * @return true 
+ * @return false 
+ */
 static bool check_off(fsm_t *p_this)
 {
     fsm_ultrasound_t *p_fsm_ultrasound = (fsm_ultrasound_t *)p_this;
     return !p_fsm_ultrasound->status;
 }
+
 /**
  * @brief Check if the trigger signal has ended. Call function port_ultrasound_get_trigger_end and return the value
  * 
@@ -134,6 +153,7 @@ static void do_start_measurement(fsm_t *p_this)
     // Llamar a la función de inicio de medición del puerto
     port_ultrasound_start_measurement(p_fsm_ultrasound->ultrasound_id);
 }
+
 /**
  * @brief Stop the trigger signal of the ultrasound sensor.
  * 
@@ -146,7 +166,14 @@ static void do_stop_trigger(fsm_t *p_this)
     port_ultrasound_set_trigger_end(((fsm_ultrasound_t *)p_this)->ultrasound_id, false);
 }
 
-
+/**
+ * @brief Set the distance measured by the ultrasound sensor.
+ * This function is called when the ultrasound sensor has received the echo signal. It calculates the distance in cm and stores it in the array of distances.
+ * When the array is full, it computes the median of the array and resets the index of the array.
+ * 
+ * 
+ * @param p_this 
+ */
 static void do_set_distance(fsm_t *p_this)
 {
     fsm_ultrasound_t *p_fsm = (fsm_ultrasound_t *)p_this;

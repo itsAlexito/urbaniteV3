@@ -23,7 +23,10 @@ typedef struct fsm_ultrasound_t fsm_ultrasound_t; /*!< Variable */
 /* Function prototypes and explanation -------------------------------------------------*/
 
 /* Enums */
-
+/**
+  * @brief Enumerator for the ultrasound finite state machine.
+  * 
+  */
 enum FSM_ULTRASOUND
 {
     WAIT_START = 0, 
@@ -84,7 +87,6 @@ void fsm_ultrasound_fire(fsm_ultrasound_t *p_fsm);
  * This function returns the status of the ultrasound. This function might be used for testing and debugging purposes.
  * 
  * @param p_fsm 
- * @param status 
  * @return true if the ultrasound is active
  * @return false if not
  */

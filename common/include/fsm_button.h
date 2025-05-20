@@ -21,7 +21,7 @@
  /* Enums */
 
  /**
-  * @brief Enum for the button FSM
+  * @brief Enumerator for the button finite state machine.
   * 
   */
  enum FSM_BUTTON

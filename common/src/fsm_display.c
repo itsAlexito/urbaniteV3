@@ -21,6 +21,10 @@
 #include "fsm_display.h"
 #include "fsm.h"
 /* Typedefs --------------------------------------------------------------------*/
+/**
+ * @brief Structure of the Display FSM.
+ * 
+ */
 struct fsm_display_t
 {
     fsm_t f; /*!< Display FSM */
@@ -166,6 +170,17 @@ static fsm_trans_t fsm_trans_display[] = {
 
 /* Other auxiliary functions */
 
+/**
+ * @brief Iniatialize the FSM display
+ * This function initializes the default values of the FSM struct and calls to the port to initialize the associated HW given the ID.
+ * The FSM stores the display level of the display system. The user should set it using the function fsm_display_set_distance().
+ * 
+ * @warning This display system is agnostic to the ultrasound sensor or any other sensor. It only shows the status of the display system set by the user. It does not matter if the display is for a parking sensor, a door sensor, or any other sensor. The display system only shows a status according to a distance set by the user.
+ * The FSM contains information of the RGB LED ID. This ID is a unique identifier that is managed by the user in the port.
+ *  That is where the user provides identifiers and HW information for all the RGB LEDs on his system. The FSM does not have to know anything of the underlying HW.
+ * @param p_fsm_display 
+ * @param display_id 
+ */
 static void fsm_display_init(fsm_display_t *p_fsm_display, uint32_t display_id)
 {
     //1. Call the fsm_init() to initialize the FSM. Pass the address of the fsm_t struct and the transition table.
@@ -189,19 +204,6 @@ fsm_display_t *fsm_display_new(uint32_t display_id)
     fsm_display_init(p_fsm_display, display_id); /* Initialize the FSM */
     return p_fsm_display;
 }
-
-/**
- * @brief Iniatialize the FSM display
- * This function initializes the default values of the FSM struct and calls to the port to initialize the associated HW given the ID.
- * The FSM stores the display level of the display system. The user should set it using the function fsm_display_set_distance().
- * 
- * @warning This display system is agnostic to the ultrasound sensor or any other sensor. It only shows the status of the display system set by the user. It does not matter if the display is for a parking sensor, a door sensor, or any other sensor. The display system only shows a status according to a distance set by the user.
- * The FSM contains information of the RGB LED ID. This ID is a unique identifier that is managed by the user in the port.
- *  That is where the user provides identifiers and HW information for all the RGB LEDs on his system. The FSM does not have to know anything of the underlying HW.
- * @param p_fsm_display 
- * @param display_id 
- */
-
 
 
 void fsm_display_fire(fsm_display_t *p_fsm)
